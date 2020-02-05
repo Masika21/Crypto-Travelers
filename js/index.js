@@ -1,7 +1,6 @@
 console.log("in javascript");
 const contractSource = `
-
-contract tripNumber =
+contract TripNumber =
 
   record trip =
     { creatorAddress : address,
@@ -17,30 +16,28 @@ contract tripNumber =
     { trips = {},
       tripsLength = 0 }
   
-  payable stateful entrypoint maketrip()=
+  payable stateful entrypoint makeTrip()=
     Chain.spend(ak_2bKhoFWgQ9os4x8CaeDTHZRGzUcSwcXYUrM12gZHKTdyreGRgG,Call.value)
 
-  entrypoint gettrip(index : int) : trip =
+  entrypoint getTrip(index : int) : trip =
   	switch(Map.lookup(index, state.trips))
 	    None    => abort("There is no trip with this item registered.")
 	    Some(x) => x
 
-  stateful entrypoint registertrip(url' : string, name' : string) =
+  stateful entrypoint registerTrip(url' : string, name' : string) =
     let trip = { creatorAddress = Call.caller, url = url', name = name', numberCount = 0}
-    let index = gettripsLength() + 1
+    let index = getTripsLength() + 1
     put(state{ trips[index] = trip, tripsLength = index })
 
-  entrypoint gettripsLength() : int =
+  entrypoint getTripsLength() : int =
     state.tripsLength
 
   stateful entrypoint numbertrip(index : int) =
-    let trip = gettrip(index)
+    let trip = getTrip(index)
     Chain.spend(trip.creatorAddress, Call.value)
     let updatednumberCount = trip.numberCount + Call.value
     let updatedtrips = state.trips{ [index].numberCount = updatednumberCount }
     put(state{ trips = updatedtrips })
- 
-
 `;
 
 //Address of the trip voting smart contract on the testnet of the aeternity blockchain
